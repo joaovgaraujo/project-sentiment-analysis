@@ -39,6 +39,9 @@ results/metrics/*.json
 results/figures/*.png
 results/figures/*.pdf
 
+# Local config
+.kiro/
+
 # IDEs
 .idea/
 .vscode/

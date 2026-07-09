@@ -1,40 +1,34 @@
 """Sentiment classification model definition."""
 
-from typing import Sequence
-
 import numpy as np
+from sklearn.linear_model import LogisticRegression
+
+from src.utils.config import RANDOM_SEED
 
 
-def build_model() -> object:
-    """Instantiate the sentiment classification model.
-
-    Returns:
-        Initialized classification model.
-    """
-    pass
-
-
-def train_model(x_train: Sequence, y_train: Sequence[int]) -> object:
-    """Train the classification model on the provided data.
+def train_model(X_train: np.ndarray, y_train: np.ndarray) -> LogisticRegression:
+    """Train a LogisticRegression classifier on count matrix data.
 
     Args:
-        x_train: Training features.
-        y_train: Training labels (0 for negative, 1 for positive).
+        X_train: Training feature matrix (word counts).
+        y_train: Training labels (0 or 1).
 
     Returns:
-        Trained classification model.
+        Fitted LogisticRegression model.
     """
-    pass
+    model = LogisticRegression(max_iter=1000, random_state=RANDOM_SEED)
+    model.fit(X_train, y_train)
+    return model
 
 
-def predict(model: object, x: Sequence) -> np.ndarray:
-    """Generate sentiment predictions using the trained model.
+def predict(model: LogisticRegression, X: np.ndarray) -> np.ndarray:
+    """Generate predictions using the trained model.
 
     Args:
-        model: Trained classification model.
-        x: Input features.
+        model: Fitted LogisticRegression model.
+        X: Feature matrix (word counts).
 
     Returns:
         Array of predicted labels (0 or 1).
     """
-    pass
+    return np.asarray(model.predict(X), dtype=int)

@@ -15,20 +15,84 @@ Classification is **binary**:
 
 **Amazon Product Reviews** — [Kaggle: yasserh/amazon-product-reviews-dataset](https://www.kaggle.com/datasets/yasserh/amazon-product-reviews-dataset)
 
+License: CC0-1.0
+
 Columns used:
 - `reviews.text`: review text
 - `reviews.rating`: rating from 1 to 5
 
-### Downloading the dataset
+## Quick Start
+
+### 1. Clone and install
 
 ```bash
-# Via Kaggle CLI (requires kaggle.json configured)
-kaggle datasets download -d yasserh/amazon-product-reviews-dataset
-unzip amazon-product-reviews-dataset.zip -d data/raw/
-mv data/raw/*.csv data/raw/reviews.csv
+git clone https://github.com/anapaulabarros/project-sentiment-analysis.git
+cd project-sentiment-analysis
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate   # Linux/macOS
+# .venv\Scripts\activate    # Windows
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-Or download manually from the Kaggle website and place the CSV at `data/raw/reviews.csv`.
+### 2. Download the dataset
+
+**Option A — Kaggle CLI** (requires `~/.kaggle/kaggle.json`):
+
+```bash
+pip install kaggle
+kaggle datasets download -d yasserh/amazon-product-reviews-dataset -p data/raw/
+unzip data/raw/amazon-product-reviews-dataset.zip -d data/raw/
+mv data/raw/7817_1.csv data/raw/reviews.csv
+rm data/raw/amazon-product-reviews-dataset.zip
+```
+
+**Windows (PowerShell):**
+
+```powershell
+pip install kaggle
+kaggle datasets download -d yasserh/amazon-product-reviews-dataset -p data/raw/
+Expand-Archive -Path "data/raw/amazon-product-reviews-dataset.zip" -DestinationPath "data/raw/" -Force
+Rename-Item "data/raw/7817_1.csv" "reviews.csv"
+Remove-Item "data/raw/amazon-product-reviews-dataset.zip"
+```
+
+**Option B — Manual download:**
+
+1. Go to https://www.kaggle.com/datasets/yasserh/amazon-product-reviews-dataset
+2. Click "Download" and extract the ZIP
+3. Rename `7817_1.csv` to `reviews.csv`
+4. Place it at `data/raw/reviews.csv`
+
+### 3. Run the pipeline
+
+```bash
+python main.py
+```
+
+Expected output:
+```
+========================================
+  Classification Metrics Report
+========================================
+  accuracy    : 0.9190
+  f1_score    : 0.9570
+  precision   : 0.9356
+  recall      : 0.9793
+========================================
+```
+
+### 4. Run tests
+
+```bash
+pip install pytest
+python -m pytest
+```
+
+All 115 tests should pass.
 
 ## Project Structure
 
@@ -42,70 +106,73 @@ project-sentiment-analysis/
 ├── results/
 │   ├── metrics/                   # Evaluation metrics per experiment
 │   └── figures/                   # Plots and visualizations
+├── tests/
+│   ├── test_data_loader.py        # Data loader unit tests
+│   ├── test_preprocessing.py      # Preprocessing unit tests
+│   ├── test_predict.py            # Prediction unit tests
+│   ├── test_evaluation.py         # Metrics unit tests
+│   ├── test_split.py              # Train/test split tests
+│   ├── test_properties.py         # Property-based tests
+│   └── test_integration.py        # Full pipeline integration test
 └── src/
     ├── data/
-    │   └── loader.py              # Dataset loading and validation
+    │   └── loader.py              # CSV loading and schema validation
     ├── preprocessing/
-    │   └── transform.py           # Text cleaning and label normalization
+    │   └── transform.py           # Text cleaning, labels, vectorization
     ├── models/
-    │   └── model.py               # Model definition and prediction
+    │   └── model.py               # LogisticRegression training/prediction
     ├── training/
-    │   └── train.py               # Dataset splitting and training
+    │   └── train.py               # Dataset splitting and orchestration
     ├── evaluation/
-    │   └── metrics.py             # Evaluation metrics and reporting
+    │   └── metrics.py             # NumPy-based metrics and reporting
     └── utils/
         └── config.py              # Global constants and parameters
-```
-
-## Installation
-
-```bash
-# Clone the repository
-git clone <repository-url>
-cd project-sentiment-analysis
-
-# Create and activate a virtual environment
-python -m venv .venv
-source .venv/bin/activate   # Linux/macOS
-# .venv\Scripts\activate    # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-## Usage
-
-```bash
-python main.py
 ```
 
 ## NLP Pipeline
 
 ```
-Raw text
+CSV file (data/raw/reviews.csv)
     │
     ▼
-clean_text()           # lowercase, remove punctuation, collapse spaces
+load_data()            # load CSV, validate columns
     │
     ▼
-normalize_label()      # rating → 0/1 (discard neutral)
+preprocess_dataset()   # clean_text + normalize_label + drop neutrals
     │
     ▼
-Feature extraction     # numerical text representation
+split_dataset()        # NumPy-based 80/20 train/test split
     │
     ▼
-Classification model   # binary classifier
+build_vocabulary()     # word → index mapping from training texts
     │
     ▼
-predict: 0 (NEGATIVE) | 1 (POSITIVE)
+texts_to_matrix()      # NumPy Bag-of-Words count matrix
+    │
+    ▼
+train_model()          # LogisticRegression on NumPy arrays
+    │
+    ▼
+predict()              # np.ndarray of 0 (NEGATIVE) or 1 (POSITIVE)
+    │
+    ▼
+evaluate_model()       # accuracy, F1, precision, recall (NumPy)
 ```
 
 ## Current Model
 
-| Component     | Choice                          |
-|---------------|---------------------------------|
-| Features      | To be defined                   |
-| Classifier    | To be defined                   |
-| Evaluation    | Accuracy, F1, Precision, Recall |
+| Component     | Choice                                    |
+|---------------|-------------------------------------------|
+| Features      | Bag-of-Words (NumPy count matrix)         |
+| Classifier    | LogisticRegression (scikit-learn)          |
+| Evaluation    | Accuracy, F1, Precision, Recall (NumPy)   |
+| Split         | 80/20 train/test (NumPy random shuffle)   |
 
-Deep learning models with PyTorch will be introduced in future deliveries.
+## Course Deliverables Covered (Stage 1)
+
+1. **Functions & modularization** — all code in small, focused functions
+2. **Package structure** — `src/data`, `src/preprocessing`, `src/models`, `src/training`, `src/evaluation`, `src/utils`
+3. **Type hints** — all functions annotated with parameter and return types
+4. **NumPy** — vocabulary building, count matrix vectorization, train/test split, evaluation metrics
+
+Deep learning models with PyTorch will be introduced in Stage 2 (deliverables 5–6).
