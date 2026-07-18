@@ -75,15 +75,23 @@ python main.py
 
 Expected output:
 ```
+Epoch   1 | train error: 0.6554 | test error: 0.7627
+Epoch  10 | train error: 0.3629 | test error: 0.5628
+...
+Epoch 100 | train error: 0.1811 | test error: 0.3224
+
 ========================================
   Classification Metrics Report
 ========================================
-  accuracy    : 0.9190
-  f1_score    : 0.9570
-  precision   : 0.9356
-  recall      : 0.9793
+  accuracy    : 0.9242
+  f1_score    : 0.9604
+  precision   : 0.9238
+  recall      : 1.0000
 ========================================
 ```
+
+The trained model is saved to `results/model.pt` and its metrics to
+`results/metrics/metrics.json`.
 
 ### 4. Run tests
 
@@ -120,7 +128,7 @@ project-sentiment-analysis/
     ├── preprocessing/
     │   └── transform.py           # Text cleaning, labels, vectorization
     ├── models/
-    │   └── model.py               # LogisticRegression training/prediction
+    │   └── model.py               # PyTorch model training/prediction/saving
     ├── training/
     │   └── train.py               # Dataset splitting and orchestration
     ├── evaluation/
@@ -150,13 +158,16 @@ build_vocabulary()     # word → index mapping from training texts
 texts_to_matrix()      # NumPy Bag-of-Words count matrix
     │
     ▼
-train_model()          # LogisticRegression on NumPy arrays
+train_model()          # PyTorch logistic regression (prints train/test error)
     │
     ▼
 predict()              # np.ndarray of 0 (NEGATIVE) or 1 (POSITIVE)
     │
     ▼
 evaluate_model()       # accuracy, F1, precision, recall (NumPy)
+    │
+    ▼
+save_model()           # results/model.pt + results/metrics/metrics.json
 ```
 
 ## Current Model
@@ -164,15 +175,19 @@ evaluate_model()       # accuracy, F1, precision, recall (NumPy)
 | Component     | Choice                                    |
 |---------------|-------------------------------------------|
 | Features      | Bag-of-Words (NumPy count matrix)         |
-| Classifier    | LogisticRegression (scikit-learn)          |
+| Classifier    | Logistic regression (PyTorch)             |
+| Training      | SGD + BCEWithLogitsLoss, 100 epochs       |
 | Evaluation    | Accuracy, F1, Precision, Recall (NumPy)   |
 | Split         | 80/20 train/test (NumPy random shuffle)   |
 
-## Course Deliverables Covered (Stage 1)
+## PyTorch Implementation (Entrega 3)
 
-1. **Functions & modularization** — all code in small, focused functions
-2. **Package structure** — `src/data`, `src/preprocessing`, `src/models`, `src/training`, `src/evaluation`, `src/utils`
-3. **Type hints** — all functions annotated with parameter and return types
-4. **NumPy** — vocabulary building, count matrix vectorization, train/test split, evaluation metrics
+The classifier is a single linear layer (`nn.Linear`) trained with gradient
+descent. This deliverable covers four steps:
 
-Deep learning models with PyTorch will be introduced in Stage 2 (deliverables 5–6).
+1. **Load the data** — `load_data()` reads and validates the CSV.
+2. **Train the data** — `train_model()` runs the PyTorch training loop.
+3. **Print training and test error** — the loss on both sets is printed every
+   10 epochs so learning can be followed.
+4. **Save the results** — the model weights go to `results/model.pt` and the
+   metrics to `results/metrics/metrics.json`.

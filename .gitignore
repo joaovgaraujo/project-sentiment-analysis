@@ -13,7 +13,6 @@ build/
 # Virtual environments
 .venv/
 venv/
-venv/
 env/
 .env
 
@@ -38,9 +37,6 @@ data/processed/*.parquet
 results/metrics/*.json
 results/figures/*.png
 results/figures/*.pdf
-
-# Local config
-.kiro/
 
 # IDEs
 .idea/
