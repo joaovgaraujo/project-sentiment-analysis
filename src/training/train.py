@@ -1,12 +1,22 @@
 """Training pipeline: dataset splitting and model training orchestration."""
 
+import json
+import os
+
 import numpy as np
 import pandas as pd
 
 from src.evaluation.metrics import evaluate_model
-from src.models.model import predict, train_model
+from src.models.model import predict, save_model, train_model
 from src.preprocessing.transform import build_vocabulary, texts_to_matrix
-from src.utils.config import LABEL_COLUMN, RANDOM_SEED, TEST_SIZE, TEXT_COLUMN
+from src.utils.config import (
+    LABEL_COLUMN,
+    METRICS_PATH,
+    MODEL_PATH,
+    RANDOM_SEED,
+    TEST_SIZE,
+    TEXT_COLUMN,
+)
 
 
 def split_dataset(
@@ -71,10 +81,15 @@ def run_training(data: pd.DataFrame) -> dict[str, object]:
     X_train = texts_to_matrix(x_train, vocab)
     X_test = texts_to_matrix(x_test, vocab)
 
-    model = train_model(X_train, y_train.to_numpy())
+    model = train_model(
+        X_train, y_train.to_numpy(), X_test, y_test.to_numpy()
+    )
     y_pred = predict(model, X_test)
 
     metrics = evaluate_model(y_test, y_pred)
+
+    save_model(model, MODEL_PATH)
+    save_metrics(metrics, METRICS_PATH)
 
     return {
         "model": model,
@@ -83,3 +98,10 @@ def run_training(data: pd.DataFrame) -> dict[str, object]:
         "metrics": metrics,
         "vocab": vocab,
     }
+
+
+def save_metrics(metrics: dict[str, float], path: str) -> None:
+    """Save evaluation metrics as a JSON file."""
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(metrics, f, indent=2)

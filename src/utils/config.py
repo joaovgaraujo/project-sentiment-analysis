@@ -13,3 +13,11 @@ MAX_NEGATIVE_RATING: int = 2  # rating <= 2 → negative (0)
 # Train/test split
 TEST_SIZE: float = 0.2
 RANDOM_SEED: int = 42
+
+# PyTorch training
+EPOCHS: int = 100
+LEARNING_RATE: float = 0.1
+
+# Output paths for the trained model and its metrics
+MODEL_PATH: str = "results/model.pt"
+METRICS_PATH: str = "results/metrics/metrics.json"
