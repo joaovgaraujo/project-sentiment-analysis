@@ -8,7 +8,7 @@ import pandas as pd
 
 from src.evaluation.metrics import evaluate_model
 from src.models.model import predict, save_model, train_model
-from src.preprocessing.transform import build_vocabulary, texts_to_matrix
+from src.preprocessing.transform import build_vocabulary, save_vocabulary, texts_to_matrix
 from src.utils.config import (
     LABEL_COLUMN,
     METRICS_PATH,
@@ -16,6 +16,7 @@ from src.utils.config import (
     RANDOM_SEED,
     TEST_SIZE,
     TEXT_COLUMN,
+    VOCAB_PATH,
 )
 
 
@@ -89,6 +90,7 @@ def run_training(data: pd.DataFrame) -> dict[str, object]:
     metrics = evaluate_model(y_test, y_pred)
 
     save_model(model, MODEL_PATH)
+    save_vocabulary(vocab, VOCAB_PATH)
     save_metrics(metrics, METRICS_PATH)
 
     return {

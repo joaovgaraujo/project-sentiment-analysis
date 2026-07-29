@@ -17,7 +17,9 @@ RANDOM_SEED: int = 42
 # PyTorch training
 EPOCHS: int = 100
 LEARNING_RATE: float = 0.1
+BATCH_SIZE: int = 32
 
-# Output paths for the trained model and its metrics
+# Output paths for the trained model, vocabulary and metrics
 MODEL_PATH: str = "results/model.pt"
+VOCAB_PATH: str = "results/vocab.json"
 METRICS_PATH: str = "results/metrics/metrics.json"

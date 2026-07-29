@@ -37,6 +37,7 @@ data/processed/*.parquet
 results/metrics/*.json
 results/figures/*.png
 results/figures/*.pdf
+results/vocab.json
 
 # IDEs
 .idea/
@@ -46,6 +47,9 @@ results/figures/*.pdf
 
 # macOS
 .DS_Store
+
+# Material do curso (referência local, não versionar)
+Projeto - Engenharia de Software para IA e Frameworks Profundos 26.1.pdf
 
 # Pytest / coverage
 .pytest_cache/

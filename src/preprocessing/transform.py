@@ -1,5 +1,7 @@
 """Text preprocessing and label normalization transformations."""
 
+import json
+import os
 import re
 
 import numpy as np
@@ -124,3 +126,28 @@ def texts_to_matrix(texts: pd.Series, vocab: dict[str, int]) -> np.ndarray:
             if word in vocab:
                 matrix[i, vocab[word]] += 1
     return matrix
+
+
+def save_vocabulary(vocab: dict[str, int], path: str) -> None:
+    """Save the word-to-index vocabulary as a JSON file.
+
+    Args:
+        vocab: Vocabulary dictionary from build_vocabulary.
+        path: Destination file path.
+    """
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(vocab, f, indent=2)
+
+
+def load_vocabulary(path: str) -> dict[str, int]:
+    """Load a word-to-index vocabulary previously saved with save_vocabulary.
+
+    Args:
+        path: Path to the JSON file produced by save_vocabulary.
+
+    Returns:
+        Vocabulary dictionary mapping each word to its index.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
