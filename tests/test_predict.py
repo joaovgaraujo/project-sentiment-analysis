@@ -1,4 +1,6 @@
-"""Unit tests for the model prediction module."""
+"""Tests for the model prediction functions."""
+
+import unittest
 
 import numpy as np
 
@@ -6,8 +8,8 @@ from src.models.model import predict, train_model
 
 
 def _get_trained_model():
-    """Helper: train a small model on synthetic count matrix data."""
-    # 6 samples, 4 features (words: great, terrible, good, bad)
+    """Train a small model on a synthetic word-count matrix."""
+    # 6 samples, 4 features (words: great, terrible, good, bad).
     X_train = np.array([
         [2, 0, 1, 0],  # positive
         [1, 0, 2, 0],  # positive
@@ -20,34 +22,39 @@ def _get_trained_model():
     return train_model(X_train, y_train)
 
 
-def test_predict_returns_array() -> None:
-    """predict should return a numpy array of labels."""
-    model = _get_trained_model()
-    X_test = np.array([[2, 0, 1, 0], [0, 2, 0, 1]], dtype=np.float64)
-    result = predict(model, X_test)
-    assert isinstance(result, np.ndarray)
+class TestPredict(unittest.TestCase):
+    """Tests for predict."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.model = _get_trained_model()
+
+    def test_returns_array(self) -> None:
+        X_test = np.array([[2, 0, 1, 0], [0, 2, 0, 1]], dtype=np.float64)
+        result = predict(self.model, X_test)
+        self.assertIsInstance(result, np.ndarray)
+
+    def test_output_is_binary(self) -> None:
+        X_test = np.array(
+            [[1, 0, 1, 0], [0, 1, 0, 1], [1, 1, 0, 0]], dtype=np.float64
+        )
+        result = predict(self.model, X_test)
+        self.assertTrue(all(val in (0, 1) for val in result))
+
+    def test_batch_length_matches_input(self) -> None:
+        X_test = np.array(
+            [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+            dtype=np.float64,
+        )
+        result = predict(self.model, X_test)
+        self.assertEqual(len(result), 4)
+        self.assertEqual(result.shape, (4,))
+
+    def test_dtype_is_int(self) -> None:
+        X_test = np.array([[1, 0, 1, 0]], dtype=np.float64)
+        result = predict(self.model, X_test)
+        self.assertTrue(np.issubdtype(result.dtype, np.integer))
 
 
-def test_predict_output_is_binary() -> None:
-    """predict should return only 0 or 1 as label values."""
-    model = _get_trained_model()
-    X_test = np.array([[1, 0, 1, 0], [0, 1, 0, 1], [1, 1, 0, 0]], dtype=np.float64)
-    result = predict(model, X_test)
-    assert all(val in (0, 1) for val in result)
-
-
-def test_predict_batch_length_matches_input() -> None:
-    """predict output length should match the number of input samples."""
-    model = _get_trained_model()
-    X_test = np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]], dtype=np.float64)
-    result = predict(model, X_test)
-    assert len(result) == 4
-    assert result.shape == (4,)
-
-
-def test_predict_dtype_is_int() -> None:
-    """predict should return array with integer dtype."""
-    model = _get_trained_model()
-    X_test = np.array([[1, 0, 1, 0]], dtype=np.float64)
-    result = predict(model, X_test)
-    assert np.issubdtype(result.dtype, np.integer)
+if __name__ == "__main__":
+    unittest.main()
