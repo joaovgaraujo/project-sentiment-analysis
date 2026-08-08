@@ -1,57 +1,55 @@
-"""Unit tests for the preprocessing module."""
+"""Tests for the preprocessing module."""
+
+import unittest
 
 from src.preprocessing.transform import clean_text, normalize_label
 
 
-def test_clean_text_converts_to_lowercase() -> None:
-    """clean_text should convert all characters to lowercase."""
-    assert clean_text("Hello World") == "hello world"
-    assert clean_text("UPPERCASE TEXT") == "uppercase text"
-    assert clean_text("MiXeD CaSe") == "mixed case"
+class TestCleanText(unittest.TestCase):
+    """Tests for clean_text."""
+
+    def test_converts_to_lowercase(self) -> None:
+        self.assertEqual(clean_text("Hello World"), "hello world")
+        self.assertEqual(clean_text("UPPERCASE TEXT"), "uppercase text")
+        self.assertEqual(clean_text("MiXeD CaSe"), "mixed case")
+
+    def test_removes_extra_spaces(self) -> None:
+        self.assertEqual(clean_text("  spaces   here  "), "spaces here")
+        self.assertEqual(clean_text("a    b"), "a b")
+        self.assertEqual(clean_text("  leading"), "leading")
+        self.assertEqual(clean_text("trailing  "), "trailing")
+
+    def test_removes_punctuation(self) -> None:
+        self.assertEqual(clean_text("Hello, World!"), "hello world")
+        self.assertEqual(clean_text("price: $100.00!!"), "price 10000")
+        self.assertEqual(clean_text("a...b---c"), "abc")
+        self.assertEqual(clean_text("don't stop!"), "dont stop")
+
+    def test_empty_string(self) -> None:
+        self.assertEqual(clean_text(""), "")
+
+    def test_idempotent(self) -> None:
+        texts = ["Hello, World!", "  spaces   here  ", "UPPER!!", "already clean"]
+        for text in texts:
+            with self.subTest(text=text):
+                once = clean_text(text)
+                self.assertEqual(clean_text(once), once)
 
 
-def test_clean_text_removes_extra_spaces() -> None:
-    """clean_text should collapse multiple spaces into one."""
-    assert clean_text("  spaces   here  ") == "spaces here"
-    assert clean_text("a    b") == "a b"
-    assert clean_text("  leading") == "leading"
-    assert clean_text("trailing  ") == "trailing"
+class TestNormalizeLabel(unittest.TestCase):
+    """Tests for normalize_label."""
+
+    def test_positive(self) -> None:
+        self.assertEqual(normalize_label(4), 1)
+        self.assertEqual(normalize_label(5), 1)
+
+    def test_negative(self) -> None:
+        self.assertEqual(normalize_label(1), 0)
+        self.assertEqual(normalize_label(2), 0)
+
+    def test_neutral(self) -> None:
+        self.assertIsNone(normalize_label(3))
 
 
-def test_clean_text_removes_punctuation() -> None:
-    """clean_text should remove punctuation and special characters."""
-    assert clean_text("Hello, World!") == "hello world"
-    assert clean_text("price: $100.00!!") == "price 10000"
-    assert clean_text("a...b---c") == "abc"
-    assert clean_text("don't stop!") == "dont stop"
-
-
-def test_clean_text_empty_string() -> None:
-    """clean_text should return empty string for empty input."""
-    assert clean_text("") == ""
-
-
-def test_clean_text_idempotent() -> None:
-    """clean_text applied twice should equal clean_text applied once."""
-    texts = ["Hello, World!", "  spaces   here  ", "UPPER!!", "already clean"]
-    for text in texts:
-        once = clean_text(text)
-        twice = clean_text(once)
-        assert once == twice
-
-
-def test_normalize_label_positive() -> None:
-    """normalize_label should return 1 for ratings >= 4."""
-    assert normalize_label(4) == 1
-    assert normalize_label(5) == 1
-
-
-def test_normalize_label_negative() -> None:
-    """normalize_label should return 0 for ratings <= 2."""
-    assert normalize_label(1) == 0
-    assert normalize_label(2) == 0
-
-
-def test_normalize_label_neutral() -> None:
-    """normalize_label should return None for rating == 3."""
-    assert normalize_label(3) is None
+if __name__ == "__main__":
+    unittest.main()

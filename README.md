@@ -95,12 +95,23 @@ The trained model is saved to `results/model.pt` and its metrics to
 
 ### 4. Run tests
 
+The test suite uses Python's built-in `unittest`, so no extra packages are needed.
+
 ```bash
-pip install pytest
-python -m pytest
+python -m unittest discover -s tests
 ```
 
-All 115 tests should pass.
+Expected output (training logs omitted):
+
+```
+----------------------------------------------------------------------
+Ran 44 tests in 1.1s
+
+OK
+```
+
+The suite covers data loading, preprocessing output, tensor shape, model output,
+and model save/load, plus a full pipeline integration test.
 
 ## Project Structure
 
@@ -114,13 +125,16 @@ project-sentiment-analysis/
 ├── results/
 │   ├── metrics/                   # Evaluation metrics per experiment
 │   └── figures/                   # Plots and visualizations
+├── notebooks/
+│   └── requisitos_e_objetivos.ipynb  # Requirements and objectives (Entrega 4)
 ├── tests/
 │   ├── test_data_loader.py        # Data loader unit tests
 │   ├── test_preprocessing.py      # Preprocessing unit tests
+│   ├── test_model.py              # Model shape, accuracy, save/load
 │   ├── test_predict.py            # Prediction unit tests
 │   ├── test_evaluation.py         # Metrics unit tests
 │   ├── test_split.py              # Train/test split tests
-│   ├── test_properties.py         # Property-based tests
+│   ├── test_properties.py         # Property tests across many inputs
 │   └── test_integration.py        # Full pipeline integration test
 └── src/
     ├── data/

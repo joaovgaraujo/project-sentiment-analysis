@@ -19,6 +19,8 @@ env/
 # Jupyter
 .ipynb_checkpoints/
 *.ipynb
+# Except project notebooks kept under version control
+!notebooks/*.ipynb
 
 # Data (raw não versionado — baixar via Kaggle)
 data/raw/*.csv
@@ -46,6 +48,9 @@ results/figures/*.pdf
 
 # macOS
 .DS_Store
+
+# Local reference material (lecture videos, transcripts, PDFs) — not versioned
+Aulas/
 
 # Pytest / coverage
 .pytest_cache/
