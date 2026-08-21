@@ -56,3 +56,10 @@ Aulas/
 .pytest_cache/
 .coverage
 htmlcov/
+
+# Slides da apresentação final (entregues via Classroom, fora do versionamento)
+Apresentacao_Projeto.pptx
+Apresentacao_Projeto.pdf
+
+# Enunciado do professor (material de referência, não é produção do grupo)
+Guia da Apresentação de Projeto.pdf
