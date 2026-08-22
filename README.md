@@ -26,7 +26,7 @@ Columns used:
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/anapaulabarros/project-sentiment-analysis.git
+git clone https://github.com/joaovgaraujo/project-sentiment-analysis.git
 cd project-sentiment-analysis
 
 # Create virtual environment
