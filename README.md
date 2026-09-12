@@ -26,7 +26,7 @@ Columns used:
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/anapaulabarros/project-sentiment-analysis.git
+git clone https://github.com/joaovgaraujo/project-sentiment-analysis.git
 cd project-sentiment-analysis
 
 # Create virtual environment
@@ -125,6 +125,8 @@ project-sentiment-analysis/
 ├── results/
 │   ├── metrics/                   # Evaluation metrics per experiment
 │   └── figures/                   # Plots and visualizations
+├── docs/
+│   └── Roteiro_GR4ML_Preenchido.docx  # Requirements engineering workbook (GR4ML)
 ├── notebooks/
 │   └── requisitos_e_objetivos.ipynb  # Requirements and objectives (Entrega 4)
 ├── tests/
@@ -194,7 +196,26 @@ save_model()           # results/model.pt + results/metrics/metrics.json
 | Evaluation    | Accuracy, F1, Precision, Recall (NumPy)   |
 | Split         | 80/20 train/test (NumPy random shuffle)   |
 
-## PyTorch Implementation (Entrega 3)
+## Course Deliverables
+
+The project is built incrementally: each deliverable (*entrega*) applies the
+topic taught in class to this same codebase. Where to find each one:
+
+| Deliverable | Scope | Evidence in this repo |
+|-------------|-------|-----------------------|
+| **Entrega 1** | Problem framing, functions, modularization, type hints | `src/` split into packages by responsibility, `main.py` as the single entry point, type-annotated function signatures throughout |
+| **Entrega 2** | NumPy | `texts_to_matrix()` builds the Bag-of-Words count matrix; `split_dataset()` shuffles and splits; `src/evaluation/metrics.py` computes all metrics in NumPy |
+| **Entrega 3** | PyTorch: load, train, print train/test error, save | `src/models/model.py` — see the four steps below |
+| **Entrega 4** | Automated tests with `unittest`, requirements and objectives | `tests/` (44 tests, standard library only) and `notebooks/requisitos_e_objetivos.ipynb` |
+| **Entrega 6** | Design, architecture, Git and collaboration | Package layout under `src/`, branch-per-deliverable history, reviewed pull requests |
+| **Final** | Project presentation | 13-slide deck, handed in as PDF through Classroom; the slide files are not versioned here |
+
+Requirements were also modelled with GR4ML, which traces every functional,
+non-functional and data requirement back to a stakeholder goal. That workbook
+is at `docs/Roteiro_GR4ML_Preenchido.docx`, and the requirements notebook
+carries the same RF/RNF list with executed outputs.
+
+### Entrega 3 in detail
 
 The classifier is a single linear layer (`nn.Linear`) trained with gradient
 descent. This deliverable covers four steps:
