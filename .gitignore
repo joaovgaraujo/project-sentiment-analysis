@@ -56,3 +56,4 @@ Aulas/
 .pytest_cache/
 .coverage
 htmlcov/
+results/daily/result-20260911.csv
